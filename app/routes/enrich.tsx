@@ -2,25 +2,25 @@ import { conform, useForm } from "@conform-to/react";
 import { parse } from "@conform-to/zod";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
-import { InferInsertModel } from "drizzle-orm";
 import z from "zod";
 import { Alert } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
-import { db } from "~/database/neon.server";
-import { nouns, others, verbs } from "~/database/schema.server";
+import { db } from "~/database/db.server";
+import {
+  nouns,
+  others,
+  verbs,
+  type Noun,
+  type Other,
+  type Verb,
+} from "~/database/schema.server";
 
 type Term =
-  | ({
-      type: "noun";
-    } & Omit<InferInsertModel<typeof nouns>, "id">)
-  | ({
-      type: "verb";
-    } & Omit<InferInsertModel<typeof verbs>, "id">)
-  | ({
-      type: "other";
-    } & Omit<InferInsertModel<typeof others>, "id">);
+  | ({ type: "noun" } & Omit<Noun, "id">)
+  | ({ type: "verb" } & Omit<Verb, "id">)
+  | ({ type: "other" } & Omit<Other, "id">);
 
 const schema = z.object({
   input: z.string().transform((input, ctx) => {
@@ -108,24 +108,26 @@ export async function action({ request }: ActionFunctionArgs) {
   console.log(`received ${input.length} terms`);
   for (const term of input) {
     console.log(" ..");
-    switch (term.type) {
-      case "noun": {
-        const { type, ...values } = term;
-        await db.insert(nouns).values(values);
-        break;
+    try {
+      switch (term.type) {
+        case "noun": {
+          const { type, ...values } = term;
+          await db.insert(nouns).values(values);
+          break;
+        }
+        case "verb": {
+          const { type, ...values } = term;
+          await db.insert(verbs).values(values);
+          break;
+        }
+        case "other": {
+          const { type, ...values } = term;
+          await db.insert(others).values(values);
+          break;
+        }
       }
-      case "verb": {
-        const { type, ...values } = term;
-        await db.insert(verbs).values(values);
-        break;
-      }
-      case "other": {
-        const { type, ...values } = term;
-        await db.insert(others).values(values);
-        break;
-      }
-      default:
-        throw new Response("Wrong format", { status: 400 });
+    } catch (error) {
+      console.error(error);
     }
   }
   console.log("done!");

@@ -1,3 +1,4 @@
+import { InferSelectModel } from "drizzle-orm";
 import { jsonb, pgTable, varchar } from "drizzle-orm/pg-core";
 import nanoid from "~/lib/nanoid";
 import { Conjugation } from "~/lib/types";
@@ -11,6 +12,8 @@ export const nouns = pgTable("nouns", {
   french: varchar("french", { length: 128 }).notNull(),
 });
 
+export type Noun = InferSelectModel<typeof nouns>;
+
 export const verbs = pgTable("verbs", {
   id: varchar("id", { length: 13 })
     .$default(() => nanoid())
@@ -20,6 +23,8 @@ export const verbs = pgTable("verbs", {
   french: varchar("french", { length: 128 }).notNull(),
 });
 
+export type Verb = InferSelectModel<typeof verbs>;
+
 export const others = pgTable("others", {
   id: varchar("id", { length: 13 })
     .$default(() => nanoid())
@@ -27,3 +32,5 @@ export const others = pgTable("others", {
   expression: varchar("expression", { length: 128 }).notNull(),
   french: varchar("french", { length: 128 }).notNull(),
 });
+
+export type Other = InferSelectModel<typeof others>;

@@ -1,7 +1,3 @@
-import { LEXICON_TYPES } from "./constants";
-
-export type LexiconType = (typeof LEXICON_TYPES)[number];
-
 export type Conjugation = {
   s1: string;
   s2: string;

@@ -1,0 +1,111 @@
+{
+  "id": "550d13e4-a68c-4a7c-91c4-e96412d24105",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "5",
+  "dialect": "pg",
+  "tables": {
+    "nouns": {
+      "name": "nouns",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(13)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "singular": {
+          "name": "singular",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plural": {
+          "name": "plural",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "french": {
+          "name": "french",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "others": {
+      "name": "others",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(13)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "expression": {
+          "name": "expression",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "french": {
+          "name": "french",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "verbs": {
+      "name": "verbs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(13)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "infinitive": {
+          "name": "infinitive",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "present": {
+          "name": "present",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "french": {
+          "name": "french",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
