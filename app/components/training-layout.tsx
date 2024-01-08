@@ -22,7 +22,7 @@ export function TrainingLayout(props: {
           <Link
             to={props.nextPath}
             prefetch="render"
-            className="inline-flex gap-2"
+            className="inline-flex items-center gap-2"
           >
             {props.stage === "question" ? (
               <>

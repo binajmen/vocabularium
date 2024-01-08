@@ -7,7 +7,7 @@ export default function Enrich() {
   return (
     <div className="p-4 space-y-4">
       <Button variant="ghost" asChild>
-        <Link to="/" className="inline-flex gap-2 items-center">
+        <Link to="/" className="inline-flex items-center gap-2">
           <HomeIcon />
           Go back
         </Link>
@@ -24,7 +24,7 @@ export default function Enrich() {
             <Link to="other">Other</Link>
           </TabsTrigger>
           <TabsTrigger value="raw">
-            <Link to="raw" className="inline-flex gap-2 items-center">
+            <Link to="raw" className="inline-flex items-center gap-2">
               <MagicWandIcon />
               Raw
             </Link>
