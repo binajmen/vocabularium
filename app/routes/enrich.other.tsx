@@ -12,20 +12,11 @@ import { Checkbox } from "~/components/ui/checkbox";
 import { Input } from "~/components/ui/input";
 import { useToast } from "~/components/ui/use-toast";
 import { db } from "~/database/db.server";
-import { nouns } from "~/database/schema.server";
+import { others } from "~/database/schema.server";
 import { cn } from "~/lib/utils";
 
 const schema = z.object({
-  singular: z
-    .string()
-    .refine(
-      (value) =>
-        value.startsWith("der") ||
-        value.startsWith("die") ||
-        value.startsWith("das"),
-      'Must start with "der", "die" or "das"'
-    ),
-  plural: z.string(),
+  expression: z.string(),
   french: z.string(),
   confirm: z.string().refine((value) => value === "on"),
 });
@@ -34,14 +25,14 @@ export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const submission = await parse(formData, {
     schema: schema.superRefine(async (values, ctx) => {
-      const alreadyExists = await db.query.nouns.findFirst({
-        where: eq(nouns.singular, values.singular),
+      const alreadyExists = await db.query.others.findFirst({
+        where: eq(others.expression, values.expression),
       });
       if (alreadyExists) {
         ctx.addIssue({
-          path: ["singular"],
+          path: ["expression"],
           code: z.ZodIssueCode.custom,
-          message: `This noun already exists in the database`,
+          message: `This expression already exists in the database`,
         });
       }
     }),
@@ -52,7 +43,7 @@ export async function action({ request }: ActionFunctionArgs) {
     return json({ submission, success: false });
   }
 
-  await db.insert(nouns).values(submission.value);
+  await db.insert(others).values(submission.value);
 
   return json({ submission, success: true });
 }
@@ -60,7 +51,7 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function Enrich() {
   const actionData = useActionData<typeof action>();
   const { toast } = useToast();
-  const [form, { singular, plural, french, confirm }] = useForm({
+  const [form, { expression, french, confirm }] = useForm({
     lastSubmission: actionData?.submission,
     shouldValidate: "onBlur",
     onValidate({ formData }) {
@@ -74,7 +65,7 @@ export default function Enrich() {
       form.ref.current?.reset();
       toast({
         title: "Success!",
-        description: "The noun has been added to the database",
+        description: "The expression has been added to the database",
       });
     }
   }, [actionData]);
@@ -82,20 +73,12 @@ export default function Enrich() {
   return (
     <Form method="post" className="p-1 space-y-4" {...form.props}>
       <Field
-        name={singular.name}
-        label="Singular"
-        description="Singular form of the noun"
-        error={singular.error}
+        name={expression.name}
+        label="Expression"
+        description="Expression, adjective, adverb, etc."
+        error={expression.error}
       >
-        <Input placeholder="eg: das Buch" {...conform.input(singular)} />
-      </Field>
-      <Field
-        name={plural.name}
-        label="Plural"
-        description="Plural form of the noun"
-        error={plural.error}
-      >
-        <Input placeholder="eg: die Bücher" {...conform.input(plural)} />
+        <Input placeholder="eg: Danke schön!" {...conform.input(expression)} />
       </Field>
       <Field
         name={french.name}
@@ -103,7 +86,7 @@ export default function Enrich() {
         description="French translation"
         error={french.error}
       >
-        <Input placeholder="eg: Le livre" {...conform.input(french)} />
+        <Input placeholder="eg: Merci beaucoup !" {...conform.input(french)} />
       </Field>
       <div className="flex items-center gap-2">
         <Checkbox id={confirm.name} name={confirm.name} />
