@@ -2,6 +2,7 @@ import { conform, useForm } from "@conform-to/react";
 import { parse } from "@conform-to/zod";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
+import { eq } from "drizzle-orm";
 import { useEffect } from "react";
 import z from "zod";
 import { Field } from "~/components/field";
@@ -26,12 +27,26 @@ const schema = z.object({
     ),
   plural: z.string(),
   french: z.string(),
-  terms: z.string().refine((value) => value === "on"),
+  confirm: z.string().refine((value) => value === "on"),
 });
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
-  const submission = parse(formData, { schema });
+  const submission = await parse(formData, {
+    schema: schema.superRefine(async (values, ctx) => {
+      const alreadyExists = await db.query.nouns.findFirst({
+        where: eq(nouns.singular, values.singular),
+      });
+      if (alreadyExists) {
+        ctx.addIssue({
+          path: ["singular"],
+          code: z.ZodIssueCode.custom,
+          message: `This noun already exists in the database`,
+        });
+      }
+    }),
+    async: true,
+  });
 
   if (submission.intent !== "submit" || !submission.value) {
     return json({ submission, success: false });
@@ -45,7 +60,7 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function Enrich() {
   const actionData = useActionData<typeof action>();
   const { toast } = useToast();
-  const [form, { singular, plural, french, terms }] = useForm({
+  const [form, { singular, plural, french, confirm }] = useForm({
     lastSubmission: actionData?.submission,
     shouldValidate: "onBlur",
     onValidate({ formData }) {
@@ -56,7 +71,7 @@ export default function Enrich() {
   // TOFIX: there's probably a better way to handle this?
   useEffect(() => {
     if (actionData?.success) {
-      form.ref.current?.reset();
+      // form.ref.current?.reset();
       toast({
         title: "Success!",
         description: "The noun has been added to the database",
@@ -91,10 +106,10 @@ export default function Enrich() {
         <Input placeholder="eg: Le livre" {...conform.input(french)} />
       </Field>
       <div className="flex items-center gap-2">
-        <Checkbox id={terms.name} name={terms.name} />
+        <Checkbox id={confirm.name} name={confirm.name} />
         <label
-          htmlFor={terms.name}
-          className={cn("text-xs", terms.errors && "text-red-700")}
+          htmlFor={confirm.name}
+          className={cn("text-xs", confirm.errors && "text-red-700")}
         >
           I confirm the accuracy of my submission.
         </label>

@@ -7,7 +7,7 @@ export const nouns = pgTable("nouns", {
   id: varchar("id", { length: 13 })
     .$default(() => nanoid())
     .primaryKey(),
-  singular: varchar("singular", { length: 128 }).notNull(),
+  singular: varchar("singular", { length: 128 }).unique().notNull(),
   plural: varchar("plural", { length: 128 }).notNull(),
   french: varchar("french", { length: 128 }).notNull(),
 });

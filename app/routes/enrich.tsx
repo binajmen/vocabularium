@@ -17,10 +17,10 @@ export default function Enrich() {
           <TabsTrigger value="noun" asChild>
             <Link to="noun">Noun</Link>
           </TabsTrigger>
-          <TabsTrigger value="verb">
+          <TabsTrigger value="verb" disabled>
             <Link to="verb">Verb</Link>
           </TabsTrigger>
-          <TabsTrigger value="other">
+          <TabsTrigger value="other" disabled>
             <Link to="other">Other</Link>
           </TabsTrigger>
           <TabsTrigger value="raw">
