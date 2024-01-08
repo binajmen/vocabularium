@@ -1,14 +1,12 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import {
-  Link,
   isRouteErrorResponse,
   useLoaderData,
-  useParams,
   useRouteError,
 } from "@remix-run/react";
 import { eq } from "drizzle-orm";
+import RevisionLayout from "~/components/revision-layout";
 import { Alert } from "~/components/ui/alert";
-import { Button } from "~/components/ui/button";
 import { db } from "~/database/db.server";
 import { nouns } from "~/database/schema.server";
 
@@ -25,27 +23,14 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 export default function Noun() {
   const { noun } = useLoaderData<typeof loader>();
-  const { id } = useParams();
 
   return (
-    <div className="grid grid-rows-[1fr_auto] h-full bg-gray-800 p-4 gap-4">
-      <div className="bg-gray-100 rounded-md p-4 flex justify-center items-center flex-col">
-        <span className="text-2xl">{noun.singular}</span>
-        <span>{noun.plural}</span>
+    <RevisionLayout nextPath={`/random`}>
+      <div className="flex justify-center items-center flex-col">
+        <span className="text-3xl">{noun.singular}</span>
+        <span className="text-xl">{noun.plural}</span>
       </div>
-      <div className="flex justify-between">
-        <Button asChild variant={"link"}>
-          <Link to={`/noun/${id}/question`} prefetch="render">
-            Retour
-          </Link>
-        </Button>
-        <Button asChild>
-          <Link to={`/random`} prefetch="render">
-            Continuer
-          </Link>
-        </Button>
-      </div>
-    </div>
+    </RevisionLayout>
   );
 }
 
