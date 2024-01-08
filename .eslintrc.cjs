@@ -23,6 +23,14 @@ module.exports = {
   // Base config
   extends: ["eslint:recommended"],
 
+  // Rules
+  rules: {
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { ignoreRestSiblings: true },
+    ],
+  },
+
   overrides: [
     // React
     {

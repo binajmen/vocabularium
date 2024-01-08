@@ -1,7 +1,4 @@
-import "dotenv/config";
 import { type Config } from "drizzle-kit";
-
-console.log(process.env.DATABASE_URL);
 
 export default {
   schema: "./app/database/schema.server.ts",

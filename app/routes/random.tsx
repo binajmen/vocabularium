@@ -1,13 +1,13 @@
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { sql } from "drizzle-orm";
 import { db } from "~/database/db.server";
 import {
-  nouns,
-  type Noun,
-  Verb,
-  verbs,
   Other,
+  Verb,
+  nouns,
   others,
+  verbs,
+  type Noun,
 } from "~/database/schema.server";
 import { TERM_TYPES } from "~/lib/constants";
 

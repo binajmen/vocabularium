@@ -113,18 +113,18 @@ export async function action({ request }: ActionFunctionArgs) {
         case "noun": {
           const { type, ...values } = term;
           await db.insert(nouns).values(values);
-          break;
         }
+        break;
         case "verb": {
           const { type, ...values } = term;
           await db.insert(verbs).values(values);
-          break;
         }
+        break;
         case "other": {
           const { type, ...values } = term;
           await db.insert(others).values(values);
-          break;
         }
+        break;
       }
     } catch (error) {
       console.error(error);

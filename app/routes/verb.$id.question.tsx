@@ -1,6 +1,5 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import {
-  Link,
   isRouteErrorResponse,
   useLoaderData,
   useParams,
@@ -9,7 +8,6 @@ import {
 import { eq } from "drizzle-orm";
 import TrainingLayout from "~/components/training-layout";
 import { Alert } from "~/components/ui/alert";
-import { Button } from "~/components/ui/button";
 import { db } from "~/database/db.server";
 import { verbs } from "~/database/schema.server";
 
