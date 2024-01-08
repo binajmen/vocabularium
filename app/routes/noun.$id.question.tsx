@@ -28,7 +28,7 @@ export default function Noun() {
 
   return (
     <TrainingLayout nextPath={`/noun/${id}/response`}>
-      <span className="text-3xl">{noun.french}</span>
+      <span className="text-3xl text-center">{noun.french}</span>
     </TrainingLayout>
   );
 }

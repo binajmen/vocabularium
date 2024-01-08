@@ -28,7 +28,7 @@ export default function Other() {
 
   return (
     <TrainingLayout nextPath={`/other/${id}/response`}>
-      <span className="text-3xl">{other.french}</span>
+      <span className="text-3xl text-center">{other.french}</span>
     </TrainingLayout>
   );
 }

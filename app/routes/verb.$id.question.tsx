@@ -30,7 +30,7 @@ export default function Verb() {
 
   return (
     <TrainingLayout nextPath={`/verb/${id}/response`}>
-      <span className="text-3xl">{verb.french}</span>
+      <span className="text-3xl text-center">{verb.french}</span>
     </TrainingLayout>
   );
 }
