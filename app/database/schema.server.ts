@@ -18,7 +18,7 @@ export const verbs = pgTable("verbs", {
   id: varchar("id", { length: 13 })
     .$default(() => nanoid())
     .primaryKey(),
-  infinitive: varchar("infinitive", { length: 128 }).notNull(),
+  infinitive: varchar("infinitive", { length: 128 }).unique().notNull(),
   present: jsonb("present").$type<Conjugation>().notNull(),
   french: varchar("french", { length: 128 }).notNull(),
 });
@@ -29,7 +29,7 @@ export const others = pgTable("others", {
   id: varchar("id", { length: 13 })
     .$default(() => nanoid())
     .primaryKey(),
-  expression: varchar("expression", { length: 128 }).notNull(),
+  expression: varchar("expression", { length: 128 }).unique().notNull(),
   french: varchar("french", { length: 128 }).notNull(),
 });
 
