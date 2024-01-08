@@ -1,10 +1,11 @@
+import { ArrowRightIcon, EyeOpenIcon, HomeIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import { Button } from "./ui/button";
-import { HomeIcon } from "@radix-ui/react-icons";
 
-export default function TrainingLayout(props: {
+export function TrainingLayout(props: {
   nextPath: string;
   children: JSX.Element;
+  stage: "question" | "answer";
 }) {
   return (
     <div className="grid grid-rows-[1fr_auto] h-full bg-gray-800 p-4 gap-4">
@@ -18,8 +19,22 @@ export default function TrainingLayout(props: {
           </Link>
         </Button>
         <Button asChild>
-          <Link to={props.nextPath} prefetch="render">
-            Voir la réponse
+          <Link
+            to={props.nextPath}
+            prefetch="render"
+            className="inline-flex gap-2"
+          >
+            {props.stage === "question" ? (
+              <>
+                <EyeOpenIcon />
+                Show
+              </>
+            ) : (
+              <>
+                Continue
+                <ArrowRightIcon />
+              </>
+            )}
           </Link>
         </Button>
       </div>

@@ -6,7 +6,7 @@ import {
   useRouteError,
 } from "@remix-run/react";
 import { eq } from "drizzle-orm";
-import TrainingLayout from "~/components/training-layout";
+import { TrainingLayout } from "~/components/training-layout";
 import { Alert } from "~/components/ui/alert";
 import { db } from "~/database/db.server";
 import { verbs } from "~/database/schema.server";
@@ -27,7 +27,7 @@ export default function Verb() {
   const { id } = useParams();
 
   return (
-    <TrainingLayout nextPath={`/verb/${id}/response`}>
+    <TrainingLayout nextPath={`/verb/${id}/answer`} stage="question">
       <span className="text-3xl text-center">{verb.french}</span>
     </TrainingLayout>
   );

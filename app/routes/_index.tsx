@@ -1,3 +1,4 @@
+import { PlusCircledIcon, RocketIcon } from "@radix-ui/react-icons";
 import type { MetaFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
@@ -15,10 +16,16 @@ export default function Index() {
       <h1 className="text-3xl text-white">Vocabularium</h1>
       <div className="flex flex-col gap-8 flex-1 justify-center h-full">
         <Button asChild>
-          <Link to="/random">S&apos;entrainer</Link>
+          <Link to="/random" className="inline-flex gap-2">
+            <RocketIcon />
+            Start training
+          </Link>
         </Button>
         <Button variant="link" asChild>
-          <Link to="/enrich">Enrichir le vocabulaire</Link>
+          <Link to="/enrich/noun" className="inline-flex gap-2">
+            <PlusCircledIcon />
+            Enrich database
+          </Link>
         </Button>
       </div>
     </div>

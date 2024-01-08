@@ -5,7 +5,7 @@ import {
   useRouteError,
 } from "@remix-run/react";
 import { eq } from "drizzle-orm";
-import TrainingLayout from "~/components/training-layout";
+import { TrainingLayout } from "~/components/training-layout";
 import { Alert } from "~/components/ui/alert";
 import { db } from "~/database/db.server";
 import { others } from "~/database/schema.server";
@@ -25,7 +25,7 @@ export default function Other() {
   const { other } = useLoaderData<typeof loader>();
 
   return (
-    <TrainingLayout nextPath={`/random`}>
+    <TrainingLayout nextPath={`/random`} stage="answer">
       <span className="text-3xl">{other.expression}</span>
     </TrainingLayout>
   );

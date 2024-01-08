@@ -5,7 +5,7 @@ import {
   useRouteError,
 } from "@remix-run/react";
 import { eq } from "drizzle-orm";
-import TrainingLayout from "~/components/training-layout";
+import { TrainingLayout } from "~/components/training-layout";
 import { Alert } from "~/components/ui/alert";
 import { db } from "~/database/db.server";
 import { nouns } from "~/database/schema.server";
@@ -25,7 +25,7 @@ export default function Noun() {
   const { noun } = useLoaderData<typeof loader>();
 
   return (
-    <TrainingLayout nextPath={`/random`}>
+    <TrainingLayout nextPath={`/random`} stage="answer">
       <div className="flex justify-center items-center flex-col">
         <span className="text-3xl">{noun.singular}</span>
         <span className="text-xl">{noun.plural}</span>
