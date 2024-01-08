@@ -20,13 +20,13 @@ export default function Enrich() {
           <TabsTrigger value="noun" asChild>
             <Link to="noun">Noun</Link>
           </TabsTrigger>
-          <TabsTrigger value="verb" disabled>
+          <TabsTrigger value="verb" asChild>
             <Link to="verb">Verb</Link>
           </TabsTrigger>
-          <TabsTrigger value="other">
+          <TabsTrigger value="other" asChild>
             <Link to="other">Other</Link>
           </TabsTrigger>
-          <TabsTrigger value="raw">
+          <TabsTrigger value="raw" asChild>
             <Link to="raw" className="inline-flex items-center gap-2">
               <MagicWandIcon />
               Raw

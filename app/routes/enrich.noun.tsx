@@ -109,7 +109,7 @@ export default function Enrich() {
         <Checkbox id={confirm.name} name={confirm.name} />
         <label
           htmlFor={confirm.name}
-          className={cn("text-xs", confirm.errors && "text-red-700")}
+          className={cn("text-xs", confirm.error && "text-red-700")}
         >
           I confirm the accuracy of my submission.
         </label>
