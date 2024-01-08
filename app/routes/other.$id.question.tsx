@@ -6,7 +6,7 @@ import {
   useRouteError,
 } from "@remix-run/react";
 import { eq } from "drizzle-orm";
-import RevisionLayout from "~/components/revision-layout";
+import TrainingLayout from "~/components/training-layout";
 import { Alert } from "~/components/ui/alert";
 import { db } from "~/database/db.server";
 import { others } from "~/database/schema.server";
@@ -27,9 +27,9 @@ export default function Other() {
   const { id } = useParams();
 
   return (
-    <RevisionLayout nextPath={`/other/${id}/response`}>
+    <TrainingLayout nextPath={`/other/${id}/response`}>
       <span className="text-3xl">{other.french}</span>
-    </RevisionLayout>
+    </TrainingLayout>
   );
 }
 

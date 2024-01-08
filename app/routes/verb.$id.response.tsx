@@ -5,7 +5,7 @@ import {
   useRouteError,
 } from "@remix-run/react";
 import { eq } from "drizzle-orm";
-import RevisionLayout from "~/components/revision-layout";
+import TrainingLayout from "~/components/training-layout";
 import { Alert } from "~/components/ui/alert";
 import { db } from "~/database/db.server";
 import { verbs } from "~/database/schema.server";
@@ -25,7 +25,7 @@ export default function Verb() {
   const { verb } = useLoaderData<typeof loader>();
 
   return (
-    <RevisionLayout nextPath={`/random`}>
+    <TrainingLayout nextPath={`/random`}>
       <div className="flex justify-center items-center flex-col">
         <span className="text-3xl mb-8">{verb.infinitive}</span>
         <div className="grid grid-cols-[auto_1fr] items-baseline gap-x-4 text-xl">
@@ -43,7 +43,7 @@ export default function Verb() {
           <span className="font-bold">{verb.present.p3}</span>
         </div>
       </div>
-    </RevisionLayout>
+    </TrainingLayout>
   );
 }
 

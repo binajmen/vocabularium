@@ -2,7 +2,7 @@ import { Link } from "@remix-run/react";
 import { Button } from "./ui/button";
 import { HomeIcon } from "@radix-ui/react-icons";
 
-export default function RevisionLayout(props: {
+export default function TrainingLayout(props: {
   nextPath: string;
   children: JSX.Element;
 }) {
