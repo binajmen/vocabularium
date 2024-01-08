@@ -3,6 +3,7 @@ import { parse } from "@conform-to/zod";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import z from "zod";
+import { Field } from "~/components/field";
 import { Alert } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
@@ -23,7 +24,7 @@ type Term =
   | ({ type: "other" } & Omit<Other, "id">);
 
 const schema = z.object({
-  input: z.string().transform((input, ctx) => {
+  raw: z.string().transform((input, ctx) => {
     const lines = input.split("\n");
     const terms: Term[] = [];
 
@@ -103,10 +104,10 @@ export async function action({ request }: ActionFunctionArgs) {
     return json(submission);
   }
 
-  const { input } = submission.value;
+  const { raw } = submission.value;
 
-  console.log(`received ${input.length} terms`);
-  for (const term of input) {
+  console.log(`received ${raw.length} terms`);
+  for (const term of raw) {
     console.log(" ..");
     try {
       switch (term.type) {
@@ -137,7 +138,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Enrich() {
   const lastSubmission = useActionData<typeof action>();
-  const [form, { input }] = useForm({
+  const [form, { raw }] = useForm({
     lastSubmission,
     onValidate({ formData }) {
       return parse(formData, { schema });
@@ -145,23 +146,17 @@ export default function Enrich() {
   });
 
   return (
-    <div className="p-4">
-      <Form method="post" className="space-y-2" {...form.props}>
-        <Label>Input:</Label>
-        <Textarea rows={15} {...conform.input(input)}>
-          {/* 
-other;Auf Wiederhören;Au revoir
-other;Auf Wiedersehen;Au revoir
-noun;das Alphabet;die Alphabete;L'alphabet
-other;bitte;S'il vous plaît
-verb;buchstabieren;épeler;buchstabiere;buchstabierst;buchstabiert;buchstabieren;buchstabiert;buchstabieren
-other;Danke;Merci
-          */}
-        </Textarea>
-        <Button type="submit">Envoyer</Button>
-        {input.error && <Alert variant="destructive">{input.error}</Alert>}
-        {form.error && <Alert variant="destructive">{form.error}</Alert>}
-      </Form>
-    </div>
+    <Form method="post" className="p-1 space-y-2" {...form.props}>
+      <Field
+        name={raw.name}
+        label="Raw input"
+        description="Expression, adjective, adverb, etc."
+        error={raw.error}
+      >
+        <Textarea rows={15} {...conform.input(raw)}></Textarea>
+      </Field>
+      <Button type="submit">Submit</Button>
+      {form.error && <Alert variant="destructive">{form.error}</Alert>}
+    </Form>
   );
 }
