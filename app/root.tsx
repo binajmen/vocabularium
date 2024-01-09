@@ -7,9 +7,12 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  isRouteErrorResponse,
+  useRouteError,
 } from "@remix-run/react";
 import stylesheet from "~/globals.css";
 import { Toaster } from "~/components/ui/toaster";
+import { Alert } from "./components/ui/alert";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),

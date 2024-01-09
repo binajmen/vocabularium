@@ -1,22 +1,18 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node";
-import {
-  isRouteErrorResponse,
-  useLoaderData,
-  useParams,
-  useRouteError,
-} from "@remix-run/react";
+import { useLoaderData, useParams } from "@remix-run/react";
 import { eq } from "drizzle-orm";
 import { TrainingLayout } from "~/components/training-layout";
-import { Alert } from "~/components/ui/alert";
 import { db } from "~/database/db.server";
 import { nouns } from "~/database/schema.server";
+import { http } from "~/lib/http-responses";
+export { ErrorBoundary } from "~/components/error-boundary";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const id = params.id!;
 
   const noun = await db.query.nouns.findFirst({ where: eq(nouns.id, id) });
   if (!noun) {
-    throw json({ message: "Noun not found" }, { status: 400 });
+    throw http.notFound({ message: "Noun not found" });
   }
 
   return json({ noun });
@@ -37,19 +33,5 @@ export default function Noun() {
         <span className="text-xl">{noun.plural}</span>
       </div>
     </TrainingLayout>
-  );
-}
-
-export function ErrorBoundary() {
-  const error = useRouteError();
-
-  return (
-    <div className="p-4">
-      {isRouteErrorResponse(error) ? (
-        <Alert variant="destructive">{error.data.message}</Alert>
-      ) : (
-        <Alert variant="destructive">Unknown error</Alert>
-      )}
-    </div>
   );
 }

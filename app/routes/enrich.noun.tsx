@@ -3,9 +3,9 @@ import { parse } from "@conform-to/zod";
 import { UploadIcon } from "@radix-ui/react-icons";
 import {
   json,
+  redirect,
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
-  redirect,
 } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { eq } from "drizzle-orm";
@@ -21,6 +21,7 @@ import { db } from "~/database/db.server";
 import { nouns } from "~/database/schema.server";
 import { http } from "~/lib/http-responses";
 import { cn } from "~/lib/utils";
+export { ErrorBoundary } from "~/components/error-boundary";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
@@ -71,7 +72,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const submission = await parse(formData, { schema: intentSchema });
 
   if (submission.intent !== "submit" || !submission.value) {
-    return json({ submission, success: false });
+    return http.badRequest({ submission, success: false });
   }
 
   switch (submission.value.intent) {
@@ -83,7 +84,7 @@ export async function action({ request }: ActionFunctionArgs) {
           error instanceof Error &&
           error.message.startsWith("duplicate key")
         ) {
-          return json({
+          return http.badRequest({
             submission: {
               ...submission,
               error: {
@@ -103,8 +104,6 @@ export async function action({ request }: ActionFunctionArgs) {
       return redirect(`/noun/${submission.value.id}/question`);
     }
   }
-
-  await db.insert(nouns).values(submission.value);
 
   return json({ submission, success: true });
 }

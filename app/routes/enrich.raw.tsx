@@ -6,7 +6,6 @@ import z from "zod";
 import { Field } from "~/components/field";
 import { Alert } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
-import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
 import { db } from "~/database/db.server";
 import {
@@ -17,6 +16,8 @@ import {
   type Other,
   type Verb,
 } from "~/database/schema.server";
+import { http } from "~/lib/http-responses";
+export { ErrorBoundary } from "~/components/error-boundary";
 
 type Term =
   | ({ type: "noun" } & Omit<Noun, "id">)
@@ -101,7 +102,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const submission = parse(formData, { schema });
 
   if (submission.intent !== "submit" || !submission.value) {
-    return json(submission);
+    return http.badRequest(submission);
   }
 
   const { raw } = submission.value;

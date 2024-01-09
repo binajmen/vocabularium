@@ -1,6 +1,6 @@
 import { conform, useForm } from "@conform-to/react";
 import { parse } from "@conform-to/zod";
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import { eq } from "drizzle-orm";
 import { useEffect } from "react";
@@ -13,9 +13,26 @@ import { Input } from "~/components/ui/input";
 import { useToast } from "~/components/ui/use-toast";
 import { db } from "~/database/db.server";
 import { verbs } from "~/database/schema.server";
+import { http } from "~/lib/http-responses";
 import { cn } from "~/lib/utils";
+export { ErrorBoundary } from "~/components/error-boundary";
 
-const schema = z.object({
+export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
+  const id = url.searchParams.get("edit");
+
+  if (id) {
+    const verb = await db.query.verbs.findFirst({ where: eq(verbs.id, id) });
+    if (!verb) {
+      throw http.notFound({ message: "Not found" });
+    }
+    return json({ verb });
+  }
+
+  return json({ verb: null });
+}
+
+const dataSchema = z.object({
   infinitive: z.string(),
   french: z.string(),
   s1: z.string(),
@@ -27,26 +44,26 @@ const schema = z.object({
   confirm: z.string().refine((value) => value === "on"),
 });
 
+const intentSchema = z.discriminatedUnion("intent", [
+  z
+    .object({
+      intent: z.literal("submit"),
+    })
+    .merge(dataSchema),
+  z
+    .object({
+      intent: z.literal("update"),
+      id: z.string(),
+    })
+    .merge(dataSchema),
+]);
+
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
-  const submission = await parse(formData, {
-    schema: schema.superRefine(async (values, ctx) => {
-      const alreadyExists = await db.query.verbs.findFirst({
-        where: eq(verbs.infinitive, values.infinitive),
-      });
-      if (alreadyExists) {
-        ctx.addIssue({
-          path: ["infinitive"],
-          code: z.ZodIssueCode.custom,
-          message: `This verb already exists in the database`,
-        });
-      }
-    }),
-    async: true,
-  });
+  const submission = await parse(formData, { schema: intentSchema });
 
   if (submission.intent !== "submit" || !submission.value) {
-    return json({ submission, success: false });
+    return http.badRequest({ submission, success: false });
   }
 
   const { infinitive, french, ...present } = submission.value;
@@ -63,7 +80,7 @@ export default function Enrich() {
       lastSubmission: actionData?.submission,
       shouldValidate: "onBlur",
       onValidate({ formData }) {
-        return parse(formData, { schema });
+        return parse(formData, { schema: intentSchema });
       },
     });
 

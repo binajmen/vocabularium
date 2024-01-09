@@ -21,6 +21,7 @@ import { db } from "~/database/db.server";
 import { others } from "~/database/schema.server";
 import { http } from "~/lib/http-responses";
 import { cn } from "~/lib/utils";
+export { ErrorBoundary } from "~/components/error-boundary";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
@@ -62,7 +63,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const submission = await parse(formData, { schema: intentSchema });
 
   if (submission.intent !== "submit" || !submission.value) {
-    return json({ submission, success: false });
+    return http.badRequest({ submission, success: false });
   }
 
   switch (submission.value.intent) {
@@ -74,7 +75,7 @@ export async function action({ request }: ActionFunctionArgs) {
           error instanceof Error &&
           error.message.startsWith("duplicate key")
         ) {
-          return json({
+          return http.badRequest({
             submission: {
               ...submission,
               error: {
