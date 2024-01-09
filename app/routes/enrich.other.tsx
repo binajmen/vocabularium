@@ -7,7 +7,7 @@ import {
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
 } from "@remix-run/node";
-import { Form, useActionData, useLoaderData } from "@remix-run/react";
+import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import { eq } from "drizzle-orm";
 import { useEffect } from "react";
 import z from "zod";
@@ -16,6 +16,7 @@ import { Alert } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Input } from "~/components/ui/input";
+import { ToastAction } from "~/components/ui/toast";
 import { useToast } from "~/components/ui/use-toast";
 import { db } from "~/database/db.server";
 import { others } from "~/database/schema.server";
@@ -63,13 +64,17 @@ export async function action({ request }: ActionFunctionArgs) {
   const submission = await parse(formData, { schema: intentSchema });
 
   if (submission.intent !== "submit" || !submission.value) {
-    return http.badRequest({ submission, success: false });
+    return http.badRequest({ submission, id: null, success: false });
   }
 
   switch (submission.value.intent) {
     case "submit": {
       try {
-        await db.insert(others).values(submission.value);
+        const other = await db
+          .insert(others)
+          .values(submission.value)
+          .returning();
+        return json({ submission, id: other[0].id, success: true });
       } catch (error) {
         if (
           error instanceof Error &&
@@ -82,6 +87,7 @@ export async function action({ request }: ActionFunctionArgs) {
                 expression: ["This expression already exists in the database"],
               },
             },
+            id: null,
             success: false,
           });
         }
@@ -95,8 +101,6 @@ export async function action({ request }: ActionFunctionArgs) {
       return redirect(`/other/${submission.value.id}/question`);
     }
   }
-
-  return json({ submission, success: true });
 }
 
 export default function Enrich() {
@@ -119,6 +123,11 @@ export default function Enrich() {
       toast({
         title: "Success!",
         description: "The expression has been added to the database",
+        action: (
+          <ToastAction altText="View">
+            <Link to={`/other/${actionData.id}/question`}>View</Link>
+          </ToastAction>
+        ),
       });
     }
   }, [actionData]);

@@ -7,7 +7,7 @@ import {
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
 } from "@remix-run/node";
-import { Form, useActionData, useLoaderData } from "@remix-run/react";
+import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import { eq } from "drizzle-orm";
 import { useEffect } from "react";
 import z from "zod";
@@ -16,6 +16,7 @@ import { Alert } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Input } from "~/components/ui/input";
+import { ToastAction } from "~/components/ui/toast";
 import { useToast } from "~/components/ui/use-toast";
 import { db } from "~/database/db.server";
 import { nouns } from "~/database/schema.server";
@@ -72,13 +73,17 @@ export async function action({ request }: ActionFunctionArgs) {
   const submission = await parse(formData, { schema: intentSchema });
 
   if (submission.intent !== "submit" || !submission.value) {
-    return http.badRequest({ submission, success: false });
+    return http.badRequest({ submission, id: null, success: false });
   }
 
   switch (submission.value.intent) {
     case "submit": {
       try {
-        await db.insert(nouns).values(submission.value);
+        const noun = await db
+          .insert(nouns)
+          .values(submission.value)
+          .returning();
+        return json({ submission, id: noun[0].id, success: true });
       } catch (error) {
         if (
           error instanceof Error &&
@@ -91,12 +96,12 @@ export async function action({ request }: ActionFunctionArgs) {
                 singular: ["This noun already exists in the database"],
               },
             },
+            id: null,
             success: false,
           });
         }
         throw error;
       }
-      break;
     }
     case "update": {
       const { intent, id, confirm, ...values } = submission.value;
@@ -104,8 +109,6 @@ export async function action({ request }: ActionFunctionArgs) {
       return redirect(`/noun/${submission.value.id}/question`);
     }
   }
-
-  return json({ submission, success: true });
 }
 
 export default function Enrich() {
@@ -128,6 +131,11 @@ export default function Enrich() {
       toast({
         title: "Success!",
         description: "The noun has been added to the database",
+        action: (
+          <ToastAction altText="View">
+            <Link to={`/noun/${actionData.id}/question`}>View</Link>
+          </ToastAction>
+        ),
       });
     }
   }, [actionData]);

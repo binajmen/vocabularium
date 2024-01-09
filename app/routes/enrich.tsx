@@ -15,7 +15,7 @@ export default function Enrich() {
           Go back
         </Link>
       </Button>
-      <Tabs defaultValue={currentTab} className="w-[400px]">
+      <Tabs defaultValue={currentTab}>
         <TabsList>
           <TabsTrigger value="noun" asChild>
             <Link to="noun">Noun</Link>
