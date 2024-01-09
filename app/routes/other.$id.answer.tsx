@@ -2,6 +2,7 @@ import { LoaderFunctionArgs, json } from "@remix-run/node";
 import {
   isRouteErrorResponse,
   useLoaderData,
+  useParams,
   useRouteError,
 } from "@remix-run/react";
 import { eq } from "drizzle-orm";
@@ -23,9 +24,14 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 export default function Other() {
   const { other } = useLoaderData<typeof loader>();
+  const { id } = useParams();
 
   return (
-    <TrainingLayout nextPath={`/random`} stage="answer">
+    <TrainingLayout
+      editPath={`/enrich/other/${id}`}
+      nextPath={`/random`}
+      stage="answer"
+    >
       <span className="text-3xl">{other.expression}</span>
     </TrainingLayout>
   );

@@ -27,7 +27,11 @@ export default function Noun() {
   const { id } = useParams();
 
   return (
-    <TrainingLayout nextPath={`/noun/${id}/answer`} stage="question">
+    <TrainingLayout
+      editPath={`/enrich/noun/${id}`}
+      nextPath={`/noun/${id}/answer`}
+      stage="question"
+    >
       <span className="text-3xl text-center">{noun.french}</span>
     </TrainingLayout>
   );

@@ -2,6 +2,7 @@ import { LoaderFunctionArgs, json } from "@remix-run/node";
 import {
   isRouteErrorResponse,
   useLoaderData,
+  useParams,
   useRouteError,
 } from "@remix-run/react";
 import { eq } from "drizzle-orm";
@@ -23,9 +24,14 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 export default function Verb() {
   const { verb } = useLoaderData<typeof loader>();
+  const { id } = useParams();
 
   return (
-    <TrainingLayout nextPath={`/random`} stage="answer">
+    <TrainingLayout
+      editPath={`/enrich/verb/${id}`}
+      nextPath={`/random`}
+      stage="answer"
+    >
       <div className="flex justify-center items-center flex-col">
         <span className="text-3xl mb-8">{verb.infinitive}</span>
         <div className="grid grid-cols-[auto_1fr] items-baseline gap-x-4 text-xl">

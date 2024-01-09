@@ -27,7 +27,11 @@ export default function Other() {
   const { id } = useParams();
 
   return (
-    <TrainingLayout nextPath={`/other/${id}/answer`} stage="question">
+    <TrainingLayout
+      editPath={`/enrich/other/${id}`}
+      nextPath={`/other/${id}/answer`}
+      stage="question"
+    >
       <span className="text-3xl text-center">{other.french}</span>
     </TrainingLayout>
   );

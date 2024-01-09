@@ -67,8 +67,6 @@ export default function Enrich() {
       },
     });
 
-  console.log({ s1 });
-
   // TOFIX: there's probably a better way to handle this?
   useEffect(() => {
     if (actionData?.success) {

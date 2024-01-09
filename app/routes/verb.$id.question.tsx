@@ -27,7 +27,11 @@ export default function Verb() {
   const { id } = useParams();
 
   return (
-    <TrainingLayout nextPath={`/verb/${id}/answer`} stage="question">
+    <TrainingLayout
+      editPath={`/enrich/verb/${id}`}
+      nextPath={`/verb/${id}/answer`}
+      stage="question"
+    >
       <span className="text-3xl text-center">{verb.french}</span>
     </TrainingLayout>
   );
