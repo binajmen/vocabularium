@@ -1,7 +1,13 @@
 import { conform, useForm } from "@conform-to/react";
 import { parse } from "@conform-to/zod";
-import { ActionFunctionArgs, json } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { UploadIcon } from "@radix-ui/react-icons";
+import {
+  json,
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+  redirect,
+} from "@remix-run/node";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { eq } from "drizzle-orm";
 import { useEffect } from "react";
 import z from "zod";
@@ -13,9 +19,25 @@ import { Input } from "~/components/ui/input";
 import { useToast } from "~/components/ui/use-toast";
 import { db } from "~/database/db.server";
 import { nouns } from "~/database/schema.server";
+import { http } from "~/lib/http-responses";
 import { cn } from "~/lib/utils";
 
-const schema = z.object({
+export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
+  const id = url.searchParams.get("edit");
+
+  if (id) {
+    const noun = await db.query.nouns.findFirst({ where: eq(nouns.id, id) });
+    if (!noun) {
+      throw http.notFound({ message: "Not found" });
+    }
+    return json({ noun });
+  }
+
+  return json({ noun: null });
+}
+
+const dataSchema = z.object({
   singular: z
     .string()
     .refine(
@@ -30,26 +52,56 @@ const schema = z.object({
   confirm: z.string().refine((value) => value === "on"),
 });
 
+const intentSchema = z.discriminatedUnion("intent", [
+  z
+    .object({
+      intent: z.literal("submit"),
+    })
+    .merge(dataSchema),
+  z
+    .object({
+      intent: z.literal("update"),
+      id: z.string(),
+    })
+    .merge(dataSchema),
+]);
+
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
-  const submission = await parse(formData, {
-    schema: schema.superRefine(async (values, ctx) => {
-      const alreadyExists = await db.query.nouns.findFirst({
-        where: eq(nouns.singular, values.singular),
-      });
-      if (alreadyExists) {
-        ctx.addIssue({
-          path: ["singular"],
-          code: z.ZodIssueCode.custom,
-          message: `This noun already exists in the database`,
-        });
-      }
-    }),
-    async: true,
-  });
+  const submission = await parse(formData, { schema: intentSchema });
 
   if (submission.intent !== "submit" || !submission.value) {
     return json({ submission, success: false });
+  }
+
+  switch (submission.value.intent) {
+    case "submit": {
+      try {
+        await db.insert(nouns).values(submission.value);
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.message.startsWith("duplicate key")
+        ) {
+          return json({
+            submission: {
+              ...submission,
+              error: {
+                singular: ["This noun already exists in the database"],
+              },
+            },
+            success: false,
+          });
+        }
+        throw error;
+      }
+      break;
+    }
+    case "update": {
+      const { intent, id, confirm, ...values } = submission.value;
+      await db.update(nouns).set(values).where(eq(nouns.id, id));
+      return redirect(`/noun/${submission.value.id}/question`);
+    }
   }
 
   await db.insert(nouns).values(submission.value);
@@ -58,13 +110,15 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Enrich() {
+  const { noun } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const { toast } = useToast();
   const [form, { singular, plural, french, confirm }] = useForm({
+    defaultValue: noun || undefined,
     lastSubmission: actionData?.submission,
     shouldValidate: "onBlur",
     onValidate({ formData }) {
-      return parse(formData, { schema });
+      return parse(formData, { schema: intentSchema });
     },
   });
 
@@ -81,6 +135,7 @@ export default function Enrich() {
 
   return (
     <Form method="post" className="p-1 space-y-4" {...form.props}>
+      {noun && <input type="hidden" name="id" value={noun.id} />}
       <Field
         name={singular.name}
         label="Singular"
@@ -114,7 +169,10 @@ export default function Enrich() {
           I confirm the accuracy of my submission.
         </label>
       </div>
-      <Button type="submit">Submit</Button>
+      <Button type="submit" name="intent" value={noun ? "update" : "submit"}>
+        <UploadIcon />
+        {noun ? "Update" : "Submit"}
+      </Button>
       {form.error && <Alert variant="destructive">{form.error}</Alert>}
     </Form>
   );

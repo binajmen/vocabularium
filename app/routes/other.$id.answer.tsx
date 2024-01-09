@@ -16,7 +16,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   const other = await db.query.others.findFirst({ where: eq(others.id, id) });
   if (!other) {
-    throw json({ message: "other not found" }, { status: 400 });
+    throw json({ message: "Expression not found" }, { status: 400 });
   }
 
   return json({ other });
@@ -28,7 +28,7 @@ export default function Other() {
 
   return (
     <TrainingLayout
-      editPath={`/enrich/other/${id}`}
+      editPath={`/enrich/other?edit=${id}`}
       nextPath={`/random`}
       stage="answer"
     >

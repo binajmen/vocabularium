@@ -28,7 +28,7 @@ export default function Noun() {
 
   return (
     <TrainingLayout
-      editPath={`/enrich/noun/${id}`}
+      editPath={`/enrich/noun?edit=${id}`}
       nextPath={`/noun/${id}/answer`}
       stage="question"
     >
