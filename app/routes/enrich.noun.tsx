@@ -117,7 +117,7 @@ export default function Enrich() {
     lastSubmission: actionData?.submission,
     shouldValidate: "onBlur",
     onValidate({ formData }) {
-      return parse(formData, { schema: intentSchema });
+      return parse(formData, { schema: dataSchema });
     },
   });
 

@@ -131,7 +131,7 @@ export default function Enrich() {
       lastSubmission: actionData?.submission,
       shouldValidate: "onBlur",
       onValidate({ formData }) {
-        return parse(formData, { schema: intentSchema });
+        return parse(formData, { schema: dataSchema });
       },
     });
 
@@ -162,7 +162,7 @@ export default function Enrich() {
         description="French translation"
         error={french.error}
       >
-        <Input placeholder="eg: Le livre" {...conform.input(french)} />
+        <Input placeholder="eg: être" {...conform.input(french)} />
       </Field>
       <div className="grid grid-cols-[auto_1fr] items-center gap-2">
         <label className="text-sm">ich</label>
