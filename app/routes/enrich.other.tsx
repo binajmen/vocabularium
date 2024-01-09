@@ -125,7 +125,6 @@ export default function Enrich() {
 
   return (
     <Form method="post" className="p-1 space-y-4" {...form.props}>
-      {other && <input type="hidden" name="id" value={other.id} />}
       <Field
         name={expression.name}
         label="Expression"
@@ -151,6 +150,7 @@ export default function Enrich() {
           I confirm the accuracy of my submission.
         </label>
       </div>
+      {other && <input type="hidden" name="id" value={other.id} />}
       <Button type="submit" name="intent" value={other ? "update" : "submit"}>
         <UploadIcon />
         {other ? "Update" : "Submit"}

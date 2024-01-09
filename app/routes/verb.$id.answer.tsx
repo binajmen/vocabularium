@@ -24,7 +24,7 @@ export default function Verb() {
 
   return (
     <TrainingLayout
-      editPath={`/enrich/verb/${id}`}
+      editPath={`/enrich/verb?edit=${id}`}
       nextPath={`/random`}
       stage="answer"
     >

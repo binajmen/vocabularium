@@ -1,7 +1,13 @@
 import { conform, useForm } from "@conform-to/react";
 import { parse } from "@conform-to/zod";
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { UploadIcon } from "@radix-ui/react-icons";
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  json,
+  redirect,
+} from "@remix-run/node";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { eq } from "drizzle-orm";
 import { useEffect } from "react";
 import z from "zod";
@@ -66,17 +72,62 @@ export async function action({ request }: ActionFunctionArgs) {
     return http.badRequest({ submission, success: false });
   }
 
-  const { infinitive, french, ...present } = submission.value;
-  await db.insert(verbs).values({ infinitive, french, present });
+  switch (submission.value.intent) {
+    case "submit": {
+      try {
+        const { intent, infinitive, french, confirm, ...present } =
+          submission.value;
+        await db.insert(verbs).values({ infinitive, french, present });
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.message.startsWith("duplicate key")
+        ) {
+          return http.badRequest({
+            submission: {
+              ...submission,
+              error: {
+                infinitive: ["This verb already exists in the database"],
+              },
+            },
+            success: false,
+          });
+        }
+        throw error;
+      }
+      break;
+    }
+    case "update": {
+      const { intent, id, infinitive, french, confirm, ...present } =
+        submission.value;
+      await db
+        .update(verbs)
+        .set({ infinitive, french, present })
+        .where(eq(verbs.id, id));
+      return redirect(`/verb/${submission.value.id}/question`);
+    }
+  }
 
   return json({ submission, success: true });
 }
 
 export default function Enrich() {
+  const { verb } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const { toast } = useToast();
   const [form, { infinitive, french, s1, s2, s3, p1, p2, p3, confirm }] =
     useForm({
+      defaultValue: verb
+        ? {
+            ...verb,
+            s1: verb.present.s1,
+            s2: verb.present.s2,
+            s3: verb.present.s3,
+            p1: verb.present.p1,
+            p2: verb.present.p2,
+            p3: verb.present.p3,
+          }
+        : undefined,
       lastSubmission: actionData?.submission,
       shouldValidate: "onBlur",
       onValidate({ formData }) {
@@ -160,7 +211,11 @@ export default function Enrich() {
           I confirm the accuracy of my submission.
         </label>
       </div>
-      <Button type="submit">Submit</Button>
+      {verb && <input type="hidden" name="id" value={verb.id} />}
+      <Button type="submit" name="intent" value={verb ? "update" : "submit"}>
+        <UploadIcon />
+        {verb ? "Update" : "Submit"}
+      </Button>
       {form.error && <Alert variant="destructive">{form.error}</Alert>}
     </Form>
   );
