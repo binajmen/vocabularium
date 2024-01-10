@@ -8,7 +8,9 @@ export const users = pgTable("users", {
     .$default(() => nanoid())
     .primaryKey(),
   email: text("email").unique().notNull(),
-  key: text("key"),
+  salt: text("salt").notNull(),
+  password: text("password").notNull(),
+  name: text("name").notNull(),
 });
 
 export const nouns = pgTable("nouns", {

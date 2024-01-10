@@ -93,7 +93,6 @@ export async function action({ request }: ActionFunctionArgs) {
         }
         throw error;
       }
-      break;
     }
     case "update": {
       const { intent, id, confirm, ...values } = submission.value;
