@@ -1,5 +1,5 @@
 {
-  "id": "550d13e4-a68c-4a7c-91c4-e96412d24105",
+  "id": "a4438533-72ae-45e6-944c-c46be5bfde87",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -10,25 +10,25 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(13)",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
         "singular": {
           "name": "singular",
-          "type": "varchar(128)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "plural": {
           "name": "plural",
-          "type": "varchar(128)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "french": {
           "name": "french",
-          "type": "varchar(128)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         }
@@ -36,7 +36,15 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "nouns_singular_unique": {
+          "name": "nouns_singular_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "singular"
+          ]
+        }
+      }
     },
     "others": {
       "name": "others",
@@ -44,19 +52,19 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(13)",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
         "expression": {
           "name": "expression",
-          "type": "varchar(128)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "french": {
           "name": "french",
-          "type": "varchar(128)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         }
@@ -64,7 +72,51 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "others_expression_unique": {
+          "name": "others_expression_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "expression"
+          ]
+        }
+      }
+    },
+    "users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key": {
+          "name": "key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      }
     },
     "verbs": {
       "name": "verbs",
@@ -72,13 +124,13 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(13)",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
         "infinitive": {
           "name": "infinitive",
-          "type": "varchar(128)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -90,7 +142,7 @@
         },
         "french": {
           "name": "french",
-          "type": "varchar(128)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         }
@@ -98,7 +150,15 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "verbs_infinitive_unique": {
+          "name": "verbs_infinitive_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "infinitive"
+          ]
+        }
+      }
     }
   },
   "enums": {},

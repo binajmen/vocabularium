@@ -1,36 +1,44 @@
 import { InferSelectModel } from "drizzle-orm";
-import { jsonb, pgTable, varchar } from "drizzle-orm/pg-core";
+import { jsonb, pgTable, text } from "drizzle-orm/pg-core";
 import nanoid from "~/lib/nanoid";
 import { Conjugation } from "~/lib/types";
 
-export const nouns = pgTable("nouns", {
-  id: varchar("id", { length: 13 })
+export const users = pgTable("users", {
+  id: text("id")
     .$default(() => nanoid())
     .primaryKey(),
-  singular: varchar("singular", { length: 128 }).unique().notNull(),
-  plural: varchar("plural", { length: 128 }).notNull(),
-  french: varchar("french", { length: 128 }).notNull(),
+  email: text("email").unique().notNull(),
+  key: text("key"),
+});
+
+export const nouns = pgTable("nouns", {
+  id: text("id")
+    .$default(() => nanoid())
+    .primaryKey(),
+  singular: text("singular").unique().notNull(),
+  plural: text("plural").notNull(),
+  french: text("french").notNull(),
 });
 
 export type Noun = InferSelectModel<typeof nouns>;
 
 export const verbs = pgTable("verbs", {
-  id: varchar("id", { length: 13 })
+  id: text("id")
     .$default(() => nanoid())
     .primaryKey(),
-  infinitive: varchar("infinitive", { length: 128 }).unique().notNull(),
+  infinitive: text("infinitive").unique().notNull(),
   present: jsonb("present").$type<Conjugation>().notNull(),
-  french: varchar("french", { length: 128 }).notNull(),
+  french: text("french").notNull(),
 });
 
 export type Verb = InferSelectModel<typeof verbs>;
 
 export const others = pgTable("others", {
-  id: varchar("id", { length: 13 })
+  id: text("id")
     .$default(() => nanoid())
     .primaryKey(),
-  expression: varchar("expression", { length: 128 }).unique().notNull(),
-  french: varchar("french", { length: 128 }).notNull(),
+  expression: text("expression").unique().notNull(),
+  french: text("french").notNull(),
 });
 
 export type Other = InferSelectModel<typeof others>;

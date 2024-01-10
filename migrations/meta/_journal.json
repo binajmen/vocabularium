@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1704644287449,
-      "tag": "0000_petite_black_bolt",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1704750285837,
-      "tag": "0001_tan_wind_dancer",
+      "when": 1704912186584,
+      "tag": "0000_windy_legion",
       "breakpoints": true
     }
   ]
