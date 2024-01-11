@@ -18,45 +18,47 @@ export const loader = redirectIfLoggedInLoader;
 const loginSchema = z.object({
   email: z.string(),
   password: z.string(),
+  name: z.string(),
 });
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
-  const submission = await parse(formData, { schema: loginSchema });
+  const submission = await parse(formData, {
+    schema: loginSchema.superRefine(async (values, ctx) => {
+      const user = await db.query.users.findFirst({
+        where: eq(users.email, values.email),
+      });
+      if (user) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["email"],
+          message: "Email already exists",
+        });
+      }
+    }),
+    async: true,
+  });
 
   if (submission.intent !== "submit" || !submission.value) {
     return http.badRequest({ submission, success: false });
   }
 
-  const user = await db.query.users.findFirst({
-    where: eq(users.email, submission.value.email),
-  });
-  if (!user) {
-    return http.badRequest({
-      submission: { ...submission, error: { email: ["Invalid credentials"] } },
-      success: false,
-    });
-  }
-
+  const salt = crypto.randomBytes(16).toString("hex");
   const hash = crypto
-    .pbkdf2Sync(submission.value.password, user.salt, 1000, 64, "sha256")
+    .pbkdf2Sync(submission.value.password, salt, 1000, 64, "sha256")
     .toString("hex");
-  if (hash !== user.password) {
-    return http.badRequest({
-      submission: {
-        ...submission,
-        error: { password: ["Invalid credentials"] },
-      },
-      success: false,
-    });
-  }
 
-  return setAuthOnResponse(redirect("/"), user.id);
+  const user = await db
+    .insert(users)
+    .values({ ...submission.value, salt, password: hash })
+    .returning();
+
+  return setAuthOnResponse(redirect("/"), user[0].id);
 }
 
 export default function SignIn() {
   const actionData = useActionData<typeof action>();
-  const [form, { email, password }] = useForm({
+  const [form, { email, password, name }] = useForm({
     lastSubmission: actionData?.submission,
     shouldValidate: "onBlur",
     onValidate({ formData }) {
@@ -66,7 +68,7 @@ export default function SignIn() {
 
   return (
     <div className="flex items-center flex-col h-full p-8">
-      <h1 className="text-3xl">Sign-in</h1>
+      <h1 className="text-3xl">Sign up</h1>
       <Form
         method="post"
         className="flex flex-col gap-8 flex-1 justify-center h-full"
@@ -78,8 +80,11 @@ export default function SignIn() {
         <Field name={password.name} label="Password" error={password.error}>
           <Input type="password" {...conform.input(password)} />
         </Field>
-        <Button type="submit" name="intent" value="sign-in">
-          Sign in
+        <Field name={name.name} label="Name" error={name.error}>
+          <Input {...conform.input(name)} />
+        </Field>
+        <Button type="submit" name="intent" value="subscribe">
+          Sign up
         </Button>
       </Form>
     </div>

@@ -8,7 +8,7 @@ import {
 } from "@radix-ui/react-icons";
 import { Form, Link, useParams } from "@remix-run/react";
 import { Button } from "./ui/button";
-import { useUserOrNull } from "~/hooks/use-root-data";
+import { useUserOrNull } from "~/hooks/use-route-loader";
 
 export function TrainingLayout(props: {
   editPath: string;
@@ -17,7 +17,7 @@ export function TrainingLayout(props: {
   stage: "question" | "answer";
 }) {
   const id = useParams().id!;
-  const userId = useUserOrNull();
+  const user = useUserOrNull();
 
   return (
     <div className="grid grid-rows-[1fr_auto] h-full bg-gray-800 p-4 gap-4">
@@ -35,7 +35,7 @@ export function TrainingLayout(props: {
             <HomeIcon />
           </Link>
         </Button>
-        {userId && props.stage === "answer" ? (
+        {user && props.stage === "answer" ? (
           <Form
             method="get"
             action="/score"

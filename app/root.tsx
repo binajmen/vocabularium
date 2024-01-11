@@ -15,6 +15,7 @@ import {
 import { Toaster } from "~/components/ui/toaster";
 import stylesheet from "~/globals.css";
 import { getAuthFromRequest } from "./lib/auth.server";
+import { getUserOrNull } from "./database/models.server";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -22,7 +23,10 @@ export const links: LinksFunction = () => [
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  return json({ userId: await getAuthFromRequest(request) });
+  const userId = await getAuthFromRequest(request);
+  const user = userId ? await getUserOrNull(userId) : null;
+
+  return json({ user });
 }
 
 export default function App() {
