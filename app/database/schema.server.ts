@@ -31,6 +31,9 @@ export const lexicon = pgTable("lexicon", {
     .$default(() => nanoid())
     .primaryKey(),
   type: typeEnum("type").notNull(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id),
 });
 
 export type Lexicon = InferSelectModel<typeof lexicon>;

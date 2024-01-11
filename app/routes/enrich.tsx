@@ -2,6 +2,9 @@ import { HomeIcon, MagicWandIcon } from "@radix-ui/react-icons";
 import { Link, Outlet, useLocation } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { redirectIfNotLoggedInLoader } from "~/lib/auth.server";
+
+export const loader = redirectIfNotLoggedInLoader;
 
 export default function Enrich() {
   const location = useLocation();

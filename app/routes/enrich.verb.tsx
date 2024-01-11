@@ -19,7 +19,8 @@ import { Input } from "~/components/ui/input";
 import { ToastAction } from "~/components/ui/toast";
 import { useToast } from "~/components/ui/use-toast";
 import { db } from "~/database/db.server";
-import { verbs } from "~/database/schema.server";
+import { lexicon, verbs } from "~/database/schema.server";
+import { requireAuthCookie } from "~/lib/auth.server";
 import { http } from "~/lib/http-responses";
 import { cn } from "~/lib/utils";
 export { ErrorBoundary } from "~/components/error-boundary";
@@ -66,6 +67,7 @@ const intentSchema = z.discriminatedUnion("intent", [
 ]);
 
 export async function action({ request }: ActionFunctionArgs) {
+  const userId = await requireAuthCookie(request);
   const formData = await request.formData();
   const submission = await parse(formData, { schema: intentSchema });
 
@@ -78,10 +80,20 @@ export async function action({ request }: ActionFunctionArgs) {
       try {
         const { intent, infinitive, french, confirm, ...present } =
           submission.value;
-        const verb = await db
-          .insert(verbs)
-          .values({ infinitive, french, present })
-          .returning();
+        const verb = await db.transaction(async (tx) => {
+          const verb = await tx
+            .insert(verbs)
+            .values({ infinitive, french, present })
+            .returning();
+
+          await tx.insert(lexicon).values({
+            id: verb[0].id,
+            type: "verb",
+            userId,
+          });
+
+          return verb;
+        });
         return json({ submission, id: verb[0].id, success: true });
       } catch (error) {
         if (

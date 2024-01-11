@@ -55,6 +55,16 @@ export async function redirectIfLoggedInLoader({ request }: DataFunctionArgs) {
   return null;
 }
 
+export async function redirectIfNotLoggedInLoader({
+  request,
+}: DataFunctionArgs) {
+  let userId = await getAuthFromRequest(request);
+  if (!userId) {
+    throw redirect("/");
+  }
+  return null;
+}
+
 export async function redirectWithClearedCookie(): Promise<Response> {
   return redirect("/", {
     headers: {

@@ -19,7 +19,8 @@ import { Input } from "~/components/ui/input";
 import { ToastAction } from "~/components/ui/toast";
 import { useToast } from "~/components/ui/use-toast";
 import { db } from "~/database/db.server";
-import { nouns } from "~/database/schema.server";
+import { lexicon, nouns } from "~/database/schema.server";
+import { requireAuthCookie } from "~/lib/auth.server";
 import { http } from "~/lib/http-responses";
 import { cn } from "~/lib/utils";
 export { ErrorBoundary } from "~/components/error-boundary";
@@ -69,6 +70,7 @@ const intentSchema = z.discriminatedUnion("intent", [
 ]);
 
 export async function action({ request }: ActionFunctionArgs) {
+  const userId = await requireAuthCookie(request);
   const formData = await request.formData();
   const submission = await parse(formData, { schema: intentSchema });
 
@@ -79,10 +81,18 @@ export async function action({ request }: ActionFunctionArgs) {
   switch (submission.value.intent) {
     case "submit": {
       try {
-        const noun = await db
-          .insert(nouns)
-          .values(submission.value)
-          .returning();
+        const { intent, confirm, ...values } = submission.value;
+        const noun = await db.transaction(async (tx) => {
+          const noun = await tx.insert(nouns).values(values).returning();
+
+          await tx.insert(lexicon).values({
+            id: noun[0].id,
+            type: "noun",
+            userId,
+          });
+
+          return noun;
+        });
         return json({ submission, id: noun[0].id, success: true });
       } catch (error) {
         if (

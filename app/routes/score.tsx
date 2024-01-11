@@ -21,8 +21,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const properties = sm2({ ...card, grade });
   const updatedAt = addDays(new Date(), properties.interval);
 
-  console.log({ grade, properties });
-
   await db
     .insert(cards)
     .values({ ...properties, userId, lexiconId, updatedAt })
