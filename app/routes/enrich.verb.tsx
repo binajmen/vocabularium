@@ -138,7 +138,6 @@ export default function Enrich() {
       },
     });
 
-  // TOFIX: there's probably a better way to handle this?
   useEffect(() => {
     if (actionData?.success) {
       form.ref.current?.reset();

@@ -1,5 +1,13 @@
 import { InferSelectModel } from "drizzle-orm";
-import { jsonb, pgTable, text } from "drizzle-orm/pg-core";
+import {
+  date,
+  integer,
+  jsonb,
+  pgEnum,
+  pgTable,
+  primaryKey,
+  text,
+} from "drizzle-orm/pg-core";
 import nanoid from "~/lib/nanoid";
 import { Conjugation } from "~/lib/types";
 
@@ -12,6 +20,42 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   name: text("name").notNull(),
 });
+
+export const TYPES = ["noun", "verb", "other"] as const;
+export type Type = (typeof TYPES)[number];
+
+export const typeEnum = pgEnum("type", TYPES);
+
+export const lexicon = pgTable("lexicon", {
+  id: text("id")
+    .$default(() => nanoid())
+    .primaryKey(),
+  type: typeEnum("type").notNull(),
+});
+
+export type Lexicon = InferSelectModel<typeof lexicon>;
+
+export const cards = pgTable(
+  "cards",
+  {
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onUpdate: "cascade", onDelete: "cascade" }),
+    lexiconId: text("lexiconId")
+      .notNull()
+      .references(() => lexicon.id, {
+        onUpdate: "cascade",
+        onDelete: "cascade",
+      }),
+    repetition: integer("repetition").notNull(),
+    easinessFactor: integer("easinessFactor").notNull(),
+    interval: integer("interval").notNull(),
+    updatedAt: date("updatedAt", { mode: "date" }).notNull(),
+  },
+  (self) => ({
+    pk: primaryKey({ columns: [self.userId, self.lexiconId] }),
+  })
+);
 
 export const nouns = pgTable("nouns", {
   id: text("id")

@@ -36,7 +36,7 @@ export async function setAuthOnResponse(
 export async function requireAuthCookie(request: Request) {
   let userId = await getAuthFromRequest(request);
   if (!userId) {
-    throw redirect("/login", {
+    throw redirect("/sign-in", {
       headers: {
         "Set-Cookie": await cookie.serialize("", {
           maxAge: 0,
