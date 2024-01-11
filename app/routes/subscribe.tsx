@@ -1,5 +1,6 @@
 import { conform, useForm } from "@conform-to/react";
 import { parse } from "@conform-to/zod";
+import { RocketIcon } from "@radix-ui/react-icons";
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import crypto from "crypto";
@@ -68,7 +69,7 @@ export default function SignIn() {
 
   return (
     <div className="flex items-center flex-col h-full p-8">
-      <h1 className="text-3xl">Sign up</h1>
+      <h1 className="text-3xl">Welcome!</h1>
       <Form
         method="post"
         className="flex flex-col gap-8 flex-1 justify-center h-full"
@@ -84,7 +85,7 @@ export default function SignIn() {
           <Input {...conform.input(name)} />
         </Field>
         <Button type="submit" name="intent" value="subscribe">
-          Sign up
+          <RocketIcon /> Sign up
         </Button>
       </Form>
     </div>
