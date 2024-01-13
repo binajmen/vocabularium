@@ -29,12 +29,6 @@ export default function Enrich() {
           <TabsTrigger value="other" asChild>
             <Link to="other">Other</Link>
           </TabsTrigger>
-          <TabsTrigger value="raw" asChild>
-            <Link to="raw" className="inline-flex items-center gap-2">
-              <MagicWandIcon />
-              Raw
-            </Link>
-          </TabsTrigger>
         </TabsList>
       </Tabs>
       <Outlet />

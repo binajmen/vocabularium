@@ -1,6 +1,7 @@
 import {
   EnterIcon,
   ExitIcon,
+  FileTextIcon,
   PlusCircledIcon,
   RocketIcon,
 } from "@radix-ui/react-icons";
@@ -44,12 +45,25 @@ export default function Index() {
             Start training
           </Link>
         </Button>
-        <Button variant="link" asChild>
-          <Link to="/enrich/noun" className="inline-flex items-center gap-2">
-            <PlusCircledIcon />
-            Enrich database
-          </Link>
-        </Button>
+        {user && (
+          <>
+            <Button asChild>
+              <Link to="/study" className="inline-flex items-center gap-2">
+                <FileTextIcon />
+                Study
+              </Link>
+            </Button>
+            <Button variant="link" asChild>
+              <Link
+                to="/enrich/noun"
+                className="inline-flex items-center gap-2"
+              >
+                <PlusCircledIcon />
+                Enrich database
+              </Link>
+            </Button>
+          </>
+        )}
       </div>
       {user ? (
         <Form method="post">
