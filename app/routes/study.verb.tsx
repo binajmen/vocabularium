@@ -64,7 +64,7 @@ function Row(props: { children: JSX.Element[] }) {
       )}
     >
       {props.children}
-      <td>
+      <td className="flex items-center">
         <Button variant="ghost" onClick={() => setKnown(false)}>
           👎
         </Button>
