@@ -1,12 +1,14 @@
 import { type RouteSectionProps, useSubmission } from "@solidjs/router";
-import { Show } from "solid-js";
+import { Component, Show } from "solid-js";
 import { loginOrRegister } from "~/api";
+import LucideBraces from "~icons/lucide/braces";
 
 export default function Login(props: RouteSectionProps) {
   const loggingIn = useSubmission(loginOrRegister);
 
   return (
     <main>
+      <LucideBraces />
       <h1 class="text-red-400">Login</h1>
       <form action={loginOrRegister} method="post">
         <input

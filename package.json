@@ -7,6 +7,7 @@
     "start": "vinxi start"
   },
   "devDependencies": {
+    "@iconify/json": "^2.2.255",
     "@tailwindcss/forms": "^0.5.9",
     "@types/better-sqlite3": "^7.6.10",
     "@types/bun": "latest",
@@ -14,10 +15,13 @@
     "autoprefixer": "^10.4.20",
     "drizzle-kit": "^0.22.7",
     "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.13"
+    "tailwindcss": "^3.4.13",
+    "unplugin-auto-import": "^0.18.3",
+    "unplugin-icons": "^0.19.3"
   },
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "^5.1.0",
+    "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.14.7",
     "@solidjs/start": "^1.0.2",
     "argon2": "^0.41.1",
