@@ -19,7 +19,7 @@ export default function Login(props: RouteSectionProps) {
         <fieldset>
           <legend>Login or Register?</legend>
           <label>
-            <input type="radio" name="loginType" value="login" checked={true} />{" "}
+            <input type="radio" name="loginType" value="login" checked={true} />
             Login
           </label>
           <label>
@@ -28,7 +28,12 @@ export default function Login(props: RouteSectionProps) {
         </fieldset>
         <div>
           <label for="email">Email</label>
-          <input id="email" name="email" autocomplete="email" />
+          <input
+            id="email"
+            name="email"
+            autocomplete="email"
+            value="hey@binaj.dev"
+          />
         </div>
         <div>
           <label for="password">Password</label>
@@ -37,6 +42,7 @@ export default function Login(props: RouteSectionProps) {
             name="password"
             type="password"
             autocomplete="current-password"
+            value="password"
           />
         </div>
         <button type="submit">Login</button>

@@ -22,18 +22,29 @@ async function login(email: string, password: string) {
     .select()
     .from(users)
     .where(eq(users.email, email))
-    .innerJoin(passwords, eq(passwords.user_id, users.id));
-  const hash = await argon2.hash(password);
-  if (row.length === 0 || hash !== row[0].passwords.hash)
+    .innerJoin(passwords, eq(passwords.user_id, users.id))
+    .get();
+
+  if (!row) {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     throw new Error("Invalid login");
-  return row[0].users;
+  }
+
+  const verified = argon2.verify(row.passwords.hash, password);
+  if (!verified) {
+    throw new Error("Invalid login");
+  }
+
+  return row.users;
 }
 
-export async function register(email: string, password: string) {
+async function register(email: string, password: string) {
   const existingUser = await db
     .select()
     .from(users)
-    .where(eq(users.email, email));
+    .where(eq(users.email, email))
+    .get();
+
   if (existingUser) throw new Error("User already exists");
 
   const hash = await argon2.hash(password);
@@ -41,9 +52,10 @@ export async function register(email: string, password: string) {
     const user = await tx
       .insert(users)
       .values({ email, first_name: "", last_name: "" })
-      .returning();
-    await tx.insert(passwords).values({ user_id: user[0].id, hash: hash });
-    return user[0];
+      .returning()
+      .get();
+    await tx.insert(passwords).values({ user_id: user.id, hash: hash });
+    return user;
   });
 }
 
@@ -63,6 +75,7 @@ export async function loginOrRegister(formData: FormData) {
   const email = String(formData.get("email"));
   const password = String(formData.get("password"));
   const loginType = String(formData.get("loginType"));
+
   const error = validateEmail(email) || validatePassword(password);
   if (error) return new Error(error);
 
@@ -90,7 +103,11 @@ export async function getUserBySession() {
   if (userId === undefined) throw redirect("/login");
 
   try {
-    const user = db.select().from(users).where(eq(users.id, userId)).get();
+    const user = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .get();
     if (!user) throw redirect("/login");
     return user;
   } catch {

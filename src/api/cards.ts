@@ -1,3 +1,4 @@
+"use server";
 import { cards } from "~/database/schema";
 import { db } from "./db";
 

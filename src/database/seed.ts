@@ -5,6 +5,7 @@ import { createLexicon } from "~/api/lexicon";
 import { createNoun } from "~/api/nouns";
 import { createType } from "~/api/types";
 import { createPassword, createUser } from "~/api/users";
+import { nanoid } from "~/utils/nanoid";
 
 async function seed() {
   await createUser({
@@ -47,19 +48,20 @@ async function seed() {
     lang: "de",
     gender: "neutral",
     article: "das",
-    singular: "buch",
-    plural: "bücher",
+    singular: "Buch",
+    plural: "Bücher",
     example: "Wo ist mein Buch?",
   });
 
+  const deck_id = nanoid();
   await createDeck({
-    id: "deck",
+    id: deck_id,
     name: "Deck",
     user_id: "binajmen",
     lang: "de",
   });
 
-  await createCard({ deck_id: "deck", lexicon_id: "book" });
+  await createCard({ deck_id: deck_id, lexicon_id: "book" });
 }
 
 seed()

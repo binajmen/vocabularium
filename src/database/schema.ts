@@ -5,7 +5,7 @@ import {
   sqliteTable,
   text,
 } from "drizzle-orm/sqlite-core";
-import { nanoid } from "nanoid";
+import { nanoid } from "~/utils/nanoid";
 
 const id = (name: string) =>
   text(name)
