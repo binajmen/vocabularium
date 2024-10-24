@@ -7,34 +7,33 @@
     "start": "vinxi start"
   },
   "devDependencies": {
-    "@iconify/json": "^2.2.255",
+    "@iconify/json": "^2.2.263",
     "@tailwindcss/forms": "^0.5.9",
-    "@types/better-sqlite3": "^7.6.10",
-    "@types/bun": "latest",
-    "@types/node": "^20.14.8",
+    "@tailwindcss/vite": "^4.0.0-alpha.29",
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/bun": "^1.1.12",
+    "@types/node": "^22.7.9",
     "autoprefixer": "^10.4.20",
-    "drizzle-kit": "^0.22.7",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.13",
-    "unplugin-auto-import": "^0.18.3",
+    "drizzle-kit": "^0.26.2",
+    "tailwindcss": "^4.0.0-alpha.29",
     "unplugin-icons": "^0.19.3"
   },
   "dependencies": {
-    "@fontsource-variable/jetbrains-mono": "^5.1.0",
+    "@fontsource-variable/jetbrains-mono": "^5.1.1",
+    "@libsql/client": "^0.14.0",
     "@solidjs/meta": "^0.29.4",
-    "@solidjs/router": "^0.14.7",
-    "@solidjs/start": "^1.0.2",
+    "@solidjs/router": "^0.14.10",
+    "@solidjs/start": "^1.0.9",
     "argon2": "^0.41.1",
-    "better-sqlite3": "^11.0.0",
-    "drizzle-orm": "^0.31.2",
+    "drizzle-orm": "^0.35.3",
     "nanoid": "^5.0.7",
-    "solid-js": "^1.9.1",
+    "solid-js": "^1.9.3",
     "vinxi": "^0.4.3"
   },
   "engines": {
     "node": ">=20"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.6.3"
   }
 }

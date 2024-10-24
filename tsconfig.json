@@ -12,6 +12,7 @@
     "noEmit": true,
     "types": ["vinxi/types/client", "node", "unplugin-icons/types/solid"],
     "isolatedModules": true,
+    "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"],
       "@/*": ["./drizzle/*"]

@@ -1,9 +1,9 @@
-import Database from "better-sqlite3";
-import {
-  type BetterSQLite3Database,
-  drizzle,
-} from "drizzle-orm/better-sqlite3";
+import { createClient } from "@libsql/client/sqlite3";
+import { drizzle } from "drizzle-orm/libsql";
+import * as schema from "~/database/schema";
 
-const sqlite = new Database("./db.sqlite");
+const client = createClient({
+  url: "file:db.sqlite",
+});
 
-export const db: BetterSQLite3Database = drizzle(sqlite);
+export const db = drizzle(client, { schema });

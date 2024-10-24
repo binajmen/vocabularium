@@ -33,15 +33,15 @@ export const languages = sqliteTable("languages", {
   lang: id("lang"),
 });
 
+export const types = sqliteTable("types", {
+  id: id("id"),
+});
+
 export const lexicon = sqliteTable("lexicon", {
   id: id("id"),
   type: text("type")
     .references(() => types.id)
     .notNull(),
-});
-
-export const types = sqliteTable("types", {
-  id: id("id"),
 });
 
 export const nouns = sqliteTable(
@@ -53,6 +53,8 @@ export const nouns = sqliteTable(
     lang: text("lang")
       .references(() => languages.lang)
       .notNull(),
+    gender: text("gender").notNull(),
+    article: text("article").notNull(),
     singular: text("singular").notNull(),
     plural: text("plural").notNull(),
     example: text("example").notNull(),
